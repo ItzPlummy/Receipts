@@ -1,6 +1,7 @@
 from typing import Annotated, Sequence
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from fastapi_sa_orm_filter.main import FilterCore
 from sqlalchemy import select, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -8,6 +9,7 @@ from starlette import status
 
 from app.api.v1.exceptions.invalid_payment_amount import InvalidPaymentAmountError
 from app.api.v1.models.pagination import PaginationParams, PaginatedResult
+from app.api.v1.receipts.filters import receipts_filters
 from app.api.v1.receipts.models import ReceiptModel, CreateReceiptModel
 from app.api.v1.security.authenticator import Authenticator
 from app.database.models import User, Receipt, Product
@@ -69,8 +71,11 @@ async def get_all_receipts(
         pagination: Annotated[PaginationParams, Depends()],
         user: Annotated[User, Authenticator.get_user()],
         session: Annotated[AsyncSession, Depends(database_session)],
+        filters: str = Query(default=""),
 ) -> PaginatedResult[ReceiptModel]:
-    query: Select = pagination.apply(select(Receipt)).filter_by(user_id=user.id)
+    query: Select = pagination.apply(
+        FilterCore(Receipt, receipts_filters).get_query(filters)
+    ).filter_by(user_id=user.id)
 
     receipts: Sequence[Receipt] = (
         await session.execute(
