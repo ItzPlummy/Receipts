@@ -4,6 +4,7 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from app.api.router import api_router
 from app.api.v1.exceptions.api_error import APIError
 from app.database.database import Database
 from config import Config
@@ -16,6 +17,8 @@ app = FastAPI(title="Receipts")
 
 app.state.config = config
 app.state.database = database
+
+app.include_router(api_router)
 
 
 @app.exception_handler(ValidationError)
