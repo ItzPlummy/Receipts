@@ -5,14 +5,17 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from app.api.v1.exceptions.api_error import APIError
+from app.database.database import Database
 from config import Config
 
 config: Config = Config(_env_file=".env")
+database: Database = Database.from_dsn(config.database_dsn.get_secret_value())
 
 
 app = FastAPI(title="Receipts")
 
 app.state.config = config
+app.state.database = database
 
 
 @app.exception_handler(ValidationError)
