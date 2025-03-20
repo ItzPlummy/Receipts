@@ -267,6 +267,23 @@ all = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "httpx (>
 standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "httpx (>=0.23.0)", "jinja2 (>=3.1.5)", "python-multipart (>=0.0.18)", "uvicorn[standard] (>=0.12.0)"]
 
 [[package]]
+name = "fastapi-sa-orm-filter"
+version = "0.2.2"
+description = "FastAPI-SQLAlchemy filter, transform request query string to SQLAlchemy orm query"
+optional = false
+python-versions = ">=3.10"
+files = [
+    {file = "fastapi_sa_orm_filter-0.2.2-py3-none-any.whl", hash = "sha256:faf0990013a6b8330ee8b0c12372a45c6d3eb47d853901f5338ecf4ba0eb9c84"},
+    {file = "fastapi_sa_orm_filter-0.2.2.tar.gz", hash = "sha256:1a03e5bf1218abc3c499c7538788b30a5b589e87115350d17b64dae2997ee9a6"},
+]
+
+[package.dependencies]
+fastapi = "*"
+pydantic = "*"
+sqlalchemy = "*"
+sqlalchemy-to-pydantic = "*"
+
+[[package]]
 name = "greenlet"
 version = "3.1.1"
 description = "Lightweight in-process concurrent programming"
@@ -943,6 +960,21 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "sqlalchemy-to-pydantic"
+version = "0.0.8"
+description = "Tools to convert SQLAlchemy models to Pydantic models"
+optional = false
+python-versions = ">=3.10,<4.0"
+files = [
+    {file = "sqlalchemy_to_pydantic-0.0.8-py3-none-any.whl", hash = "sha256:e2b13b793b983cc43ec2291bd0dadc731c278017814b98140df8f1c468c4f837"},
+    {file = "sqlalchemy_to_pydantic-0.0.8.tar.gz", hash = "sha256:7af94ecd04c3ca1243975bba5e8e2b2e3928faf9f5ad98a555b0a1b90eec344e"},
+]
+
+[package.dependencies]
+pydantic = ">=2.3.0,<3.0.0"
+sqlalchemy = ">=2.0.20,<3.0.0"
+
+[[package]]
 name = "starlette"
 version = "0.46.1"
 description = "The little ASGI library that shines."
@@ -1002,4 +1034,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "d13a000f4c25dfe70b7ecf877b6b0a30154feccdf0695ebceda7c575350db449"
+content-hash = "d21f5826d2b69d2428b3fd2bbbfb0ac84a7c9f31caded470334d349d9362a665"

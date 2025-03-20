@@ -1,7 +1,7 @@
 from typing import Annotated, Sequence
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
+from sqlalchemy import select, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from starlette import status
@@ -70,11 +70,11 @@ async def get_all_receipts(
         user: Annotated[User, Authenticator.get_user()],
         session: Annotated[AsyncSession, Depends(database_session)],
 ) -> PaginatedResult[ReceiptModel]:
+    query: Select = pagination.apply(select(Receipt)).filter_by(user_id=user.id)
+
     receipts: Sequence[Receipt] = (
         await session.execute(
-            pagination.apply(select(Receipt))
-            .filter_by(user_id=user.id)
-            .options(joinedload(Receipt.products))
+            query.options(joinedload(Receipt.products))
         )
     ).unique().scalars().all()
 
