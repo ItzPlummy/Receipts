@@ -18,7 +18,7 @@ auth_router: APIRouter = APIRouter(prefix="/auth", tags=["Authorization"])
 
 
 @auth_router.post(
-    "",
+    "/",
     status_code=status.HTTP_202_ACCEPTED,
     response_model=AuthenticationModel,
 )
