@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Sequence
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
@@ -7,6 +7,7 @@ from sqlalchemy.orm import joinedload
 from starlette import status
 
 from app.api.v1.exceptions.invalid_payment_amount import InvalidPaymentAmountError
+from app.api.v1.models.pagination import PaginationParams, PaginatedResult
 from app.api.v1.receipts.models import ReceiptModel, CreateReceiptModel
 from app.api.v1.security.authenticator import Authenticator
 from app.database.models import User, Receipt, Product
@@ -57,3 +58,27 @@ async def create_receipt(
     )
 
     return ReceiptModel.from_database_model(receipt)
+
+
+@receipts_router.get(
+    "/",
+    status_code=status.HTTP_200_OK,
+    response_model=PaginatedResult[ReceiptModel],
+)
+async def get_all_receipts(
+        pagination: Annotated[PaginationParams, Depends()],
+        user: Annotated[User, Authenticator.get_user()],
+        session: Annotated[AsyncSession, Depends(database_session)],
+) -> PaginatedResult[ReceiptModel]:
+    receipts: Sequence[Receipt] = (
+        await session.execute(
+            pagination.apply(select(Receipt))
+            .filter_by(user_id=user.id)
+            .options(joinedload(Receipt.products))
+        )
+    ).unique().scalars().all()
+
+    return pagination.create_response(
+        results=[ReceiptModel.from_database_model(receipt) for receipt in receipts],
+        model=ReceiptModel,
+    )
