@@ -1,4 +1,5 @@
 from typing import Annotated, Sequence
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_sa_orm_filter.main import FilterCore
@@ -6,11 +7,13 @@ from sqlalchemy import select, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from starlette import status
+from starlette.responses import PlainTextResponse
 
 from app.api.v1.exceptions.invalid_payment_amount import InvalidPaymentAmountError
 from app.api.v1.models.pagination import PaginationParams, PaginatedResult
 from app.api.v1.receipts.filters import receipts_filters
 from app.api.v1.receipts.models import ReceiptModel, CreateReceiptModel
+from app.api.v1.receipts.receipt_generator import ReceiptGenerator
 from app.api.v1.security.authenticator import Authenticator
 from app.database.models import User, Receipt, Product
 from app.dependencies import database_session
@@ -87,3 +90,21 @@ async def get_all_receipts(
         results=[ReceiptModel.from_database_model(receipt) for receipt in receipts],
         model=ReceiptModel,
     )
+
+
+@receipts_router.get(
+    "/{receipt_id}",
+    status_code=status.HTTP_200_OK,
+    response_class=PlainTextResponse,
+)
+async def get_receipt_by_id(
+        receipt_id: UUID,
+        session: Annotated[AsyncSession, Depends(database_session)],
+) -> str:
+    receipt: Receipt = await session.scalar(
+        select(Receipt)
+        .filter_by(id=receipt_id)
+        .options(joinedload(Receipt.products))
+    )
+
+    return ReceiptGenerator.generate(receipt)
