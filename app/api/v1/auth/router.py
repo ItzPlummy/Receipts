@@ -21,6 +21,7 @@ auth_router: APIRouter = APIRouter(prefix="/auth", tags=["Authorization"])
     "",
     response_model=UserResponseModel,
     status_code=status.HTTP_200_OK,
+    description="Retrieve information about yourself.",
 )
 async def my_user(
         user: Annotated[User, Authenticator.get_user()]
@@ -32,6 +33,7 @@ async def my_user(
     "/",
     status_code=status.HTTP_202_ACCEPTED,
     response_model=AuthenticationModel,
+    description="Login into your account using email and password.",
 )
 async def login(
         credentials: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -55,6 +57,7 @@ async def login(
     "/register",
     status_code=status.HTTP_201_CREATED,
     response_model=AuthenticationModel,
+    description="Register a new user using username, email and password.",
 )
 async def register(
         credentials: RegisterCredentialsModel,

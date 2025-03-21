@@ -25,6 +25,7 @@ receipts_router: APIRouter = APIRouter(prefix="/receipts", tags=["Receipts"])
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=ReceiptModel,
+    description="Create new receipt with a list of products, payment type and amount of payment made.",
 )
 async def create_receipt(
         receipt_model: CreateReceiptModel,
@@ -69,6 +70,11 @@ async def create_receipt(
     "/",
     status_code=status.HTTP_200_OK,
     response_model=PaginatedResult[ReceiptModel],
+    description="""
+    Retrieve information about all receipts created by user. 
+    Items can be paginated using limit and offset query parameters, or filtered using filter parameters, 
+    such as payment type, total receipt sum and date of creation.
+    """
 )
 async def get_all_receipts(
         pagination: Annotated[PaginationParams, Depends()],
@@ -96,6 +102,7 @@ async def get_all_receipts(
     "/{receipt_id}",
     status_code=status.HTTP_200_OK,
     response_class=PlainTextResponse,
+    description="Retrieve plain text representation of a receipt by UUID.",
 )
 async def get_receipt_by_id(
         receipt_id: UUID,
