@@ -42,5 +42,32 @@ def test_my_user():
     )
 
     assert response.status_code == 200
+    assert response.json()["username"] == test_user["username"]
 
     client.app_state["user_id"] = response.json()["id"]
+
+
+def test_bad_requests():
+    response = client.post(
+        "api/v1/auth/register",
+        json=test_user
+    )
+
+    assert response.status_code == 409
+
+    response = client.post(
+        "api/v1/auth",
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data={"username": "plummybeatsoff@gmail.com", "password": "wrong_password"}
+    )
+
+    assert response.status_code == 401
+
+    response = client.get(
+        "api/v1/auth",
+        headers={"Authorization": "Bearer wrong_jwt_token"}
+    )
+
+    assert response.status_code == 401

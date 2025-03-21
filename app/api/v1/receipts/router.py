@@ -10,6 +10,7 @@ from starlette import status
 from starlette.responses import PlainTextResponse
 
 from app.api.v1.exceptions.invalid_payment_amount import InvalidPaymentAmountError
+from app.api.v1.exceptions.not_found import NotFoundError
 from app.api.v1.models.pagination import PaginationParams, PaginatedResult
 from app.api.v1.receipts.filters import receipts_filters
 from app.api.v1.receipts.models import ReceiptModel, CreateReceiptModel
@@ -108,10 +109,13 @@ async def get_receipt_by_id(
         receipt_id: UUID,
         session: Annotated[AsyncSession, Depends(database_session)],
 ) -> str:
-    receipt: Receipt = await session.scalar(
+    receipt: Receipt | None = await session.scalar(
         select(Receipt)
         .filter_by(id=receipt_id)
         .options(joinedload(Receipt.products))
     )
+
+    if receipt is None:
+        raise NotFoundError("Receipt with provided UUID was not found")
 
     return ReceiptGenerator.generate(receipt)
