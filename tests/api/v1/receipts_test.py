@@ -40,10 +40,33 @@ def test_create_receipt():
     client.app_state["receipt"] = data
     client.app_state["receipt_id"] = data["id"]
 
+    client.post(
+        "api/v1/receipts",
+        headers=client.app_state["auth_headers"],
+        json={
+            "products": [
+                {
+                    "name": "Apple",
+                    "price": 7.2,
+                    "quantity": 3
+                },
+                {
+                    "name": "Banana",
+                    "price": 900.1,
+                    "quantity": 4
+                }
+            ],
+            "payment": {
+                "type": "cash",
+                "amount": 6500.5
+            }
+        }
+    )
+
 
 def test_get_all_receipts():
     response = client.get(
-        "api/v1/receipts",
+        "api/v1/receipts?limit=1",
         headers=client.app_state["auth_headers"]
     )
 
@@ -51,13 +74,21 @@ def test_get_all_receipts():
 
     data = response.json()
 
+    assert len(data["results"]) == 1
     assert data["results"][0] == client.app_state["receipt"]
+
+    response = client.get(
+        "api/v1/receipts?filters=total__gt=1000",
+        headers=client.app_state["auth_headers"]
+    )
+
+    assert response.status_code == 200
+    assert len(response.json()["results"]) == 1
 
 
 def test_get_receipt_by_id():
     response = client.get(
-        f"api/v1/receipts/{client.app_state['receipt_id']}",
-        headers=client.app_state["auth_headers"]
+        f"api/v1/receipts/{client.app_state['receipt_id']}"
     )
 
     assert response.status_code == 200

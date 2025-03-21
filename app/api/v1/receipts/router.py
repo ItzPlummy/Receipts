@@ -89,7 +89,9 @@ async def get_all_receipts(
 
     receipts: Sequence[Receipt] = (
         await session.execute(
-            query.options(joinedload(Receipt.products))
+            query
+            .order_by(Receipt.created_at)
+            .options(joinedload(Receipt.products))
         )
     ).unique().scalars().all()
 
