@@ -30,7 +30,7 @@ async def my_user(
 
 
 @auth_router.post(
-    "/",
+    "",
     status_code=status.HTTP_202_ACCEPTED,
     response_model=AuthenticationModel,
     description="Login into your account using email and password.",

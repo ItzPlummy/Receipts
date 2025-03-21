@@ -21,7 +21,7 @@ from config import Config
 
 class Authenticator:
     ACCESS_TOKEN_EXPIRE = timedelta(minutes=15)
-    OAUTH_SCHEME: OAuth2PasswordBearer = OAuth2PasswordBearer("/api/v1/auth/")
+    OAUTH_SCHEME: OAuth2PasswordBearer = OAuth2PasswordBearer("/api/v1/auth")
 
     def __init__(
             self,

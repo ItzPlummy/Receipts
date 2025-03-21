@@ -22,7 +22,7 @@ receipts_router: APIRouter = APIRouter(prefix="/receipts", tags=["Receipts"])
 
 
 @receipts_router.post(
-    "/",
+    "",
     status_code=status.HTTP_201_CREATED,
     response_model=ReceiptModel,
     description="Create new receipt with a list of products, payment type and amount of payment made.",
@@ -67,7 +67,7 @@ async def create_receipt(
 
 
 @receipts_router.get(
-    "/",
+    "",
     status_code=status.HTTP_200_OK,
     response_model=PaginatedResult[ReceiptModel],
     description="""
