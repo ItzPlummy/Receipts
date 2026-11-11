@@ -26,7 +26,7 @@ JWT_KEY={KEY}
 
 - Upgrade migrations
 ```bash
-alembic upgade head
+alembic upgrade head
 ```
 
 ## Usage
